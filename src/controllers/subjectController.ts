@@ -4,7 +4,7 @@ import { asyncHandler } from '../utils/asyncHandler';
 
 // Get all subjects for user
 export const getSubjects = asyncHandler(async (req: Request, res: Response) => {
-  const userId = (req as any).user.userId;
+  const userId = req.user!.userId;
   
   const subjects = await Subject.find({ userId }).sort({ createdAt: -1 });
   
@@ -18,7 +18,7 @@ export const getSubjects = asyncHandler(async (req: Request, res: Response) => {
 // Create new subject
 export const createSubject = asyncHandler(async (req: Request, res: Response) => {
   const { name, code } = req.body;
-  const userId = (req as any).user.userId;
+  const userId = req.user!.userId;
 
   // Simple validation
   if (!name) {
@@ -57,7 +57,7 @@ export const createSubject = asyncHandler(async (req: Request, res: Response) =>
 export const updateSubject = asyncHandler(async (req: Request, res: Response) => {
   const { id } = req.params;
   const { name, code } = req.body;
-  const userId = (req as any).user.userId;
+  const userId = req.user!.userId;
 
   const subject = await Subject.findOne({ _id: id, userId });
   if (!subject) {
@@ -83,7 +83,7 @@ export const updateSubject = asyncHandler(async (req: Request, res: Response) =>
 // Delete subject
 export const deleteSubject = asyncHandler(async (req: Request, res: Response) => {
   const { id } = req.params;
-  const userId = (req as any).user.userId;
+  const userId = req.user!.userId;
 
   const subject = await Subject.findOne({ _id: id, userId });
   if (!subject) {

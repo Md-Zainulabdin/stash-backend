@@ -6,6 +6,18 @@ export const uploadFileValidation = [
     .withMessage('Subject ID is required')
     .isMongoId()
     .withMessage('Invalid subject ID format'),
+  body('fileCategory')
+    .optional()
+    .isIn(['Images', 'PDFs', 'Sheets', 'Docs', 'Others'])
+    .withMessage('File category must be one of: Images, PDFs, Sheets, Docs, Others'),
+  body('isAvailableOffline')
+    .optional()
+    .isBoolean()
+    .withMessage('isAvailableOffline must be a boolean'),
+  body('syncStatus')
+    .optional()
+    .isIn(['synced', 'pending', 'failed'])
+    .withMessage('Sync status must be one of: synced, pending, failed'),
 ];
 
 export const getSubjectFilesValidation = [

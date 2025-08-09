@@ -1,3 +1,14 @@
+// Extend Express Request type to include 'user' property
+declare global {
+  namespace Express {
+    interface Request {
+      user?: {
+        userId: string;
+        [key: string]: any;
+      };
+    }
+  }
+}
 import { Request, Response, NextFunction } from 'express';
 import jwt from 'jsonwebtoken';
 import { asyncHandler } from '../utils/asyncHandler';
@@ -20,8 +31,8 @@ export const protect = asyncHandler(async (req: Request, res: Response, next: Ne
 
   try {
     // Verify token
-    const decoded = jwt.verify(token, process.env.JWT_SECRET || 'fallback-secret') as any;
-    (req as any).user = decoded;
+    const decoded = jwt.verify(token, process.env.JWT_SECRET || 'fallback-secret') as { userId: string };
+    req.user = decoded;
     next();
   } catch (error) {
     return res.status(401).json({

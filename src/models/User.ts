@@ -15,6 +15,7 @@ interface IUser {
     rootFolderId?: string; // Main "Stash" folder ID in Google Drive
   };
   createdAt: Date;
+  comparePassword(candidatePassword: string): Promise<boolean>;
 }
 
 // Create the User schema (database structure)

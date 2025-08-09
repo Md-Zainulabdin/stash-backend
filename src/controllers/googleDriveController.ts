@@ -12,7 +12,7 @@ import {
 
 // Step 1: Get Google OAuth URL
 export const getGoogleDriveAuthUrl = asyncHandler(async (req: Request, res: Response) => {
-  const authUrl = getGoogleAuthUrl();
+  const authUrl = getGoogleAuthUrl();  
   
   res.json({
     success: true,
@@ -24,7 +24,7 @@ export const getGoogleDriveAuthUrl = asyncHandler(async (req: Request, res: Resp
 // Step 2: Handle OAuth callback and connect Google Drive
 export const connectGoogleDrive = asyncHandler(async (req: Request, res: Response) => {
   const { code } = req.body;
-  const userId = (req as any).user.userId;
+  const userId = req.user!.userId;
 
   if (!code) {
     return res.status(400).json({
@@ -76,9 +76,9 @@ export const connectGoogleDrive = asyncHandler(async (req: Request, res: Respons
 
 // Check Google Drive connection status
 export const getGoogleDriveStatus = asyncHandler(async (req: Request, res: Response) => {
-  const userId = (req as any).user.userId;
+  const userId = req.user!.userId;
 
-  const user = await User.findById(userId).select('googleDrive.isConnected googleDrive.connectedAt googleDrive.lastSyncAt');
+  const user = await User.findById(userId).select('+googleDrive.isConnected +googleDrive.connectedAt +googleDrive.lastSyncAt');
 
   res.json({
     success: true,
@@ -92,7 +92,7 @@ export const getGoogleDriveStatus = asyncHandler(async (req: Request, res: Respo
 
 // Disconnect Google Drive
 export const disconnectGoogleDrive = asyncHandler(async (req: Request, res: Response) => {
-  const userId = (req as any).user.userId;
+  const userId = req.user!.userId;
 
   await User.findByIdAndUpdate(userId, {
     'googleDrive.isConnected': false,
@@ -109,9 +109,9 @@ export const disconnectGoogleDrive = asyncHandler(async (req: Request, res: Resp
 
 // Sync files from Google Drive (for offline access)
 export const syncFromGoogleDrive = asyncHandler(async (req: Request, res: Response) => {
-  const userId = (req as any).user.userId;
+  const userId = req.user!.userId;
 
-  const user = await User.findById(userId).select('+googleDrive.accessToken +googleDrive.refreshToken googleDrive.rootFolderId');
+  const user = await User.findById(userId).select('+googleDrive.isConnected +googleDrive.accessToken +googleDrive.refreshToken +googleDrive.rootFolderId');
   
   if (!user?.googleDrive?.isConnected) {
     return res.status(400).json({
